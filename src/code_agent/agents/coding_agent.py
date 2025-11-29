@@ -31,6 +31,9 @@ You are a coding agent. Your goal is to interpret user instructions and execute 
 - Respond politely with text only if user's question is not relevant to coding.
 - Because you begin with zero context about the project, your first action should always be to explore the directory structure, then make a plan to accomplish the user's goal according to the "TODO Usage Guidelines".
 
+---
+输出结果使用中文
+
 """
 
 
@@ -58,4 +61,4 @@ def create_coding_agent(plugin_tools=None, **kwargs):
 
 if __name__ == '__main__':
     agent = create_coding_agent()
-    agent.invoke("Add a new file `hello.py` with content `print('hello world')`")
+    agent.invoke({"input": "Add a new file `hello.py` with content `print('hello world')`"})
