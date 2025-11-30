@@ -1,8 +1,12 @@
 from langchain.agents import create_agent
+from langchain.agents.middleware import SummarizationMiddleware, TodoListMiddleware
+from langchain.agents.middleware.todo import PlanningState
+from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import BaseTool
+from langgraph.graph import MessagesState
 
-from src.code_agent.models.chat_model import init_chat_model
+from src.code_agent.models.chat_model import init_chat_model, default_model_name
 from src.code_agent.project import project
 from src.code_agent.tools.edit.tool import text_editor_tool
 from src.code_agent.tools.fs.grep import grep_tool
@@ -44,6 +48,7 @@ def create_coding_agent(plugin_tools=None, **kwargs):
 
     return create_agent(
         model=init_chat_model(),
+        state_schema=PlanningState,
         tools=[
             ls_tool,
             tree_tool,
@@ -54,6 +59,10 @@ def create_coding_agent(plugin_tools=None, **kwargs):
         ],
         system_prompt=coding_agent_system_prompt_template.format(PROJECT_ROOT=project.root_dir),
         name="coding_agent",
+        middleware=[
+            TodoListMiddleware(),
+            SummarizationMiddleware(model=init_chat_model(),trigger=('tokens', 4000), keep=('messages', 20)),
+        ],
         **kwargs
     )
 
@@ -61,4 +70,7 @@ coding_agent = create_coding_agent()
 
 
 if __name__ == '__main__':
-    coding_agent.invoke({"input": "Add a new file `hello.py` with content `print('hello world')`"})
+
+    state=MessagesState(messages=[HumanMessage(content="帮我优化代码")])
+
+    coding_agent.invoke(state)

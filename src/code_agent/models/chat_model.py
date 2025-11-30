@@ -2,6 +2,7 @@ import os
 
 from langchain_openai import ChatOpenAI
 
+default_model_name="doubao-seed-1.6-250615"
 
 def init_chat_model():
     # 配置 OpenAI API
@@ -10,7 +11,7 @@ def init_chat_model():
     return ChatOpenAI(
         base_url="https://ark.cn-beijing.volces.com/api/v3",
         api_key=api_key,
-        model="doubao-seed-1.6-250615")
+        model=default_model_name)
 
 
 if __name__ == '__main__':
