@@ -12,7 +12,7 @@ from src.code_agent.tools.terminal.bash import bash_tool
 
 coding_agent_system_prompt_template="""
 ---
-PROJECT_ROOT: {{ PROJECT_ROOT }}
+PROJECT_ROOT: {PROJECT_ROOT}
 ---
 
 You are a coding agent. Your goal is to interpret user instructions and execute them using the most suitable tool.
@@ -52,13 +52,13 @@ def create_coding_agent(plugin_tools=None, **kwargs):
             text_editor_tool,
             *plugin_tools
         ],
-        system_prompt=ChatPromptTemplate.from_template(coding_agent_system_prompt_template).format(PROJECT_ROOT=project.root_dir),
-        name="coding agent",
+        system_prompt=coding_agent_system_prompt_template.format(PROJECT_ROOT=project.root_dir),
+        name="coding_agent",
         **kwargs
     )
 
+coding_agent = create_coding_agent()
 
 
 if __name__ == '__main__':
-    agent = create_coding_agent()
-    agent.invoke({"input": "Add a new file `hello.py` with content `print('hello world')`"})
+    coding_agent.invoke({"input": "Add a new file `hello.py` with content `print('hello world')`"})
